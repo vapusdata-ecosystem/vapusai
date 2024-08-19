@@ -1,0 +1,16 @@
+version: v1
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - BASIC
+  except:
+    - FIELD_LOWER_SNAKE_CASE
+    - PACKAGE_LOWER_SNAKE_CASE
+    - PACKAGE_DIRECTORY_MATCH
+    - ONEOF_LOWER_SNAKE_CASE
+deps:
+  - buf.build/bufbuild/protovalidate
+  - buf.build/googleapis/googleapis
+  - github.com/favadi/protoc-go-inject-tag@latest

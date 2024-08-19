@@ -1,0 +1,156 @@
+name: Build, Verify and Release microservices
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  proto-linter:
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/proto-lint.yaml@main
+  vapus-dc-svc-pipeline:
+    if: always()
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/vapus-dc_workflows.yaml@main
+    with:
+      oci-registry: ${{ vars.VAPUS_BETA_GAR }}
+      tag: ${{ github.ref }}
+    secrets:
+      signing-key: ${{ secrets.COSIGN_KEY }}
+      signing-password: ${{ secrets.COSIGN_PASSWORD }}
+      oci-username: ${{ secrets.GAR_DEV_USERNAME }}
+      oci-password: ${{ secrets.VAPUS_BETA_GAR_PASS }}
+  etldataworker-svc-pipeline:
+    if: always()
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/etldataworker_workflows.yaml@main
+    with:
+      oci-registry: ${{ vars.VAPUS_BETA_GAR }}
+      tag: ${{ github.ref }}
+    secrets:
+      signing-key: ${{ secrets.COSIGN_KEY }}
+      signing-password: ${{ secrets.COSIGN_PASSWORD }}
+      oci-username: ${{ secrets.GAR_DEV_USERNAME }}
+      oci-password: ${{ secrets.VAPUS_BETA_GAR_PASS }}
+
+  platform-svc-pipeline:
+    if: always()
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/platform_svc_workflows.yaml@main
+    with:
+      oci-registry: ${{ vars.VAPUS_BETA_GAR }}
+      tag: ${{ github.ref }}
+    secrets:
+      signing-key: ${{ secrets.COSIGN_KEY }}
+      signing-password: ${{ secrets.COSIGN_PASSWORD }}
+      oci-username: ${{ secrets.GAR_DEV_USERNAME }}
+      oci-password: ${{ secrets.VAPUS_BETA_GAR_PASS }}
+  vapusctl-svc-pipeline:
+    if: always()
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/vapusctl_workflows.yaml@main
+    with:
+      oci-registry: ${{ vars.VAPUS_BETA_GAR }}
+      tag: ${{ github.ref }}
+    secrets:
+      signing-key: ${{ secrets.COSIGN_KEY }}
+      signing-password: ${{ secrets.COSIGN_PASSWORD }}
+      oci-username: ${{ secrets.GAR_DEV_USERNAME }}
+      oci-password: ${{ secrets.VAPUS_BETA_GAR_PASS }}
+  vapusoperator-svc-pipeline:
+    if: always()
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/vapusoperator_workflows.yaml@main
+    with:
+      oci-registry: ${{ vars.VAPUS_BETA_GAR }}
+      tag: ${{ github.ref }}
+    secrets:
+      signing-key: ${{ secrets.COSIGN_KEY }}
+      signing-password: ${{ secrets.COSIGN_PASSWORD }}
+      oci-username: ${{ secrets.GAR_DEV_USERNAME }}
+      oci-password: ${{ secrets.VAPUS_BETA_GAR_PASS }}
+  aggregate-builds:
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - proto-linter
+      - vapus-dc-svc-pipeline
+      - etldataworker-svc-pipeline
+      - platform-svc-pipeline
+      - vapusctl-svc-pipeline
+      - vapusoperator-svc-pipeline
+    steps:
+      - name: Download ETLworker OCI Tag
+        uses: actions/download-artifact@v4
+        with:
+          name: etldataworker-tag-artifacts
+
+      - name: Download ETLworker OCI Digest
+        uses: actions/download-artifact@v4
+        with:
+          name: etldataworker-digest-artifacts
+
+        
+      - name: Download Platform OCI Tag
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-tag-artifacts
+
+      - name: Download Platform OCI Digest
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-digest-artifacts
+
+
+      - name: Download VDc OCI Tag
+        uses: actions/download-artifact@v4
+        with:
+          name: vdc-tag-artifacts
+      - name: Download VDc OCI Digest
+        uses: actions/download-artifact@v4
+        with:
+          name: vdc-digest-artifacts
+
+
+      - name: Read All artifacts
+        id: read-vdc-oci-tag
+        run: |
+          VDCDIGEST=$(cat vdc-digest.txt)
+          echo "VDCDIGEST=$VDCDIGEST" >> $GITHUB_ENV
+          VDCTAG=$(cat vdc-tag.txt)
+          echo "VDCTAG=$VDCTAG" >> $GITHUB_ENV
+          PLATFORMDIGEST=$(cat platform-digest.txt)
+          echo "PLATFORMDIGEST=$PLATFORMDIGEST" >> $GITHUB_ENV
+          PLATFORMTAG=$(cat platform-tag.txt)
+          echo "PLATFORMTAG=$PLATFORMTAG" >> $GITHUB_ENV
+          ETLWORKERDIGEST=$(cat etldataworker-digest.txt)
+          echo "ETLWORKERDIGEST=$ETLWORKERDIGEST" >> $GITHUB_ENV
+          ETLWORKERTAG=$(cat etldataworker-tag.txt)
+          echo "ETLWORKERTAG=$ETLWORKERTAG" >> $GITHUB_ENV
+    outputs:
+      VDCDIGEST: ${{ steps.read-vdc-oci-tag.outputs.VDCDIGEST }}
+      VDCTAG: ${{ steps.read-vdc-oci-tag.outputs.VDCTAG }}
+      PLATFORMDIGEST: ${{ steps.read-vdc-oci-tag.outputs.PLATFORMDIGEST }}
+      PLATFORMTAG: ${{ steps.read-vdc-oci-tag.outputs.PLATFORMTAG }}
+      ETLWORKERDIGEST: ${{ steps.read-vdc-oci-tag.outputs.ETLWORKERDIGEST }}
+      ETLWORKERTAG: ${{ steps.read-vdc-oci-tag.outputs.ETLWORKERTAG }}
+  helmchart-build-app:
+    if: always()
+    uses: vapusdata-ecosystem/vapusdata/.github/workflows/build_helmchart_workflows.yaml@main
+    needs: aggregate-builds
+    with:
+      etldataworker-oci-digest: ${{ needs.aggregate-builds.outputs.ETLWORKERDIGEST }}
+      etldataworker-oci-tag: ${{ needs.aggregate-builds.outputs.ETLWORKERTAG }}
+      platform-oci-digest: ${{ needs.aggregate-builds.outputs.PLATFORMDIGEST }}
+      platform-oci-tag: ${{ needs.aggregate-builds.outputs.PLATFORMTAG }}
+      vapus-dc-oci-digest: ${{ needs.aggregate-builds.outputs.VDCDIGEST }}
+      vapus-dc-oci-tag: ${{ needs.aggregate-builds.outputs.VDCTAG }}
+      upload-artifact: false
+      tag: ${{ github.ref }}
+      oci-registry: ${{ vars.VAPUS_BETA_GAR }}
+    secrets:
+      signing-key: ${{ secrets.COSIGN_KEY }}
+      signing-password: ${{ secrets.COSIGN_PASSWORD }}
+      oci-username: ${{ secrets.GAR_DEV_USERNAME }}
+      oci-password: ${{ secrets.VAPUS_BETA_GAR_PASS }}
+    # runs-on: ubuntu-latest
+    # permissions:
+    #   contents: write # required for goreleaser to upload the release assets
+    #   packages: write # to push worker images
+    
+    

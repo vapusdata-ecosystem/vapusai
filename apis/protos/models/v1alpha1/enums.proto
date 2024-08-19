@@ -1,0 +1,167 @@
+syntax = "proto3";
+
+//import "googleapis/v1/annotations.proto";
+// import "buf/validate/validate.proto";
+
+package models.v1alpha1;
+
+option go_package = "github.com/vapusdata-ecosystem/vapusai-studio/apis/protos/models/v1alpha1";
+
+enum AccessTokenScope {
+  INVALID_AT_SCOPE = 0;
+  DOMAIN_TOKEN = 1;
+  DATAPRODUCT_TOKEN = 2;
+}
+
+enum HashAlgos {
+  INVALID_HASH_ALGO = 0;
+  SHA_256 = 1;
+}
+
+enum AgentAction {
+  INVALID_ACTION = 0;
+  ADD = 1;
+  DELETE = 2;
+  UPDATE = 3;
+  CREATE = 4;
+  RUN = 5;
+  BUILD = 6;
+  DEPLOY = 7;
+  GET = 8;
+  LIST = 9;
+}
+
+enum AuthnMethod {
+  AM_INVALID = 0;
+  OIDC = 1;
+  LDAP = 2;
+}
+
+enum TtlDuration {
+  DEFAULT_TTL = 0;
+  TTL_SECONDS = 1;
+  TTL_MINUTES = 2;
+  TTL_HOURS = 3;
+  TTL_DAYS = 4;
+  TTL_MONTHS = 5;
+  TTL_NEVER_EXPIRES = 6;
+}
+
+enum TTLStatus {
+  INVALID_TTLSTATUS = 0;
+  TTL_VALID = 1;
+  TTL_REVOKED = 2;
+  TTL_EXPIRED = 3;
+}
+
+enum EncryptionAlgo {
+  JSA_INVALID=0;
+  ED25519 = 1;
+  ECDSA = 2;
+  RSA = 3;
+  
+}
+
+enum CommonStatus {
+  INVALID_STATUS = 0;
+  ACTIVE = 1;
+  INACTIVE = 2;
+  VALIDATION_PENDING = 3;
+  DELETED = 4;
+  EXPIRED = 5;
+  INVALID = 6;
+  INVITED = 7;
+  FAILED = 8;
+  SUCCESS = 9;
+}
+
+enum FileFormats {
+  YAML = 0;
+  JSON = 1;
+  TOML = 2;
+}
+
+enum TlsType {
+  INSECURE = 0;
+  PLAIN_TLS = 1;
+  MTLS = 2;
+}
+
+
+enum ApiTokenType {
+  BASIC = 0;
+  BEARER = 1;
+  APIKEY = 2;
+}
+/**
+ * Enum representing the retention frequency for data compliance.
+ */
+enum Frequency {
+  INVALID_FREQUENCY = 0;
+  MONTH = 1;
+  WEEK = 2;
+  YEAR = 3;
+  HOUR = 4;
+  MINUTES = 5;
+  SECONDS = 6;
+  DAY = 7;
+}
+
+enum AIModelServiceProvider {
+  INVALID_PROVIDER = 0;
+  OPENAI = 1;
+  MISTRAL = 2;
+  HUGGING_FACE = 3;
+  VAPUSAI = 4;
+  OLLAMA = 5;
+  AZURE_OPENAI = 6;
+  AZURE_PHI = 7;
+  GEMINI = 8;
+  AWS = 9;
+  META = 10;
+}
+
+enum AIServiceHostType {
+    INVALID_HOST_TYPE = 0;
+    VAPUSAI_STUDIO = 1;
+    OSS_SERVICE = 2;
+    MANAGED_SERVICE = 3;
+}
+
+/**
+ * @enum
+ * Enumerates the storage engines supported by the Vapus Data Platform system.
+ */
+enum StorageEngine {
+	INVALID_DS_SERVICE_TYPE = 0;
+	MYSQL = 1;
+	REDIS = 2;
+	ELASTICSEARCH = 3;
+	MONGODB = 4;
+	SECRET_MANAGER = 5;
+	HASHICORPVAULT = 6;
+	POSTGRES = 7;
+	OCI = 8;
+	PYPI = 9;
+	BLOB = 10;
+	KAFKA_QUEUE = 11;
+	RABBITMQ = 12;
+	RESTAPI = 13;
+	GRPC = 14;
+  AWS_VAULT = 15;
+  GCP_VAULT = 16;
+  AZURE_VAULT = 17;
+}
+
+enum AIModelRoles {
+  USER = 0;
+  SYSTEM = 1;
+  FUNCTION = 2;
+  ASSISTANT = 3;
+  TOOL = 4;
+}
+
+enum ConfigScope {
+  STUDIO = 0;
+  SPACE = 1;
+}

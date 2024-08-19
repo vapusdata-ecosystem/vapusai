@@ -1,0 +1,215 @@
+/**
+ * This file defines the protocol buffer messages for the common models in the v1alpha1 version of the API.
+ */
+
+syntax = "proto3";
+
+//import "googleapis/v1/annotations.proto";
+// import "buf/validate/validate.proto";
+import "protos/models/v1alpha1/enums.proto";
+
+package models.v1alpha1;
+
+option go_package = "github.com/vapusdata-ecosystem/vapusai-studio/apis/protos/models/v1alpha1";
+
+/**
+ * Represents a search parameter.
+ */
+message SearchParam {
+    string q = 1; // The search query string.
+    repeated models.v1alpha1.MapList search = 2; // The list of search parameters.
+}
+
+/**
+ * Represents a key-value pair for mapping.
+ */
+message Mapper {
+  string key = 1; // The key.
+  string value = 2; // The value.
+}
+
+/**
+ * Represents a key-value pair in a map.
+ */
+message MapList {
+  string key = 1; // The key.
+  repeated string values = 2; // The list of values.
+}
+
+/**
+ * Represents a base identifier.
+ */
+message BaseIdentifier {
+  string name = 1; // The name.
+  string type = 2; // The type.
+  string identifier = 3; // The identifier.
+}
+
+/**
+ * Represents a synchronization schedule.
+ */
+message SyncSchedule {
+    Frequency frequency = 1; // The frequency of synchronization.
+    int64 value = 2; // The value associated with the frequency.
+    int64 limit = 3; // The limit for synchronization.
+}
+
+/**
+ * Represents a schedule tab.
+ */
+message ScheduleTab {
+  repeated SyncSchedule syncTab = 1; // The list of synchronization schedules.
+  int64 limit = 2; // The limit for the schedule tab.
+}
+
+/**
+ * Represents the parameters for JWT authentication.
+ */
+message JWTParams {
+  string name = 1; // The name.
+  string publicJWTKey = 2; // The public JWT key.
+  string privateJWTKey = 3; // The private JWT key.
+  string vId = 4; // Ignore in Requests
+  EncryptionAlgo signingAlgorithm = 5; // The signing algorithm.
+  bool isAlreadyInSecretBS = 6; // Indicates if the JWT keys are already in the secret base store.
+  CommonStatus status = 7; // The status.
+  bool generateInPlatform = 8; // Indicates if the JWT keys should be generated in the platform.
+}
+
+/**
+ * Represents the TLS configuration.
+ */
+message TlsConfig {
+  TlsType tlsType = 1; // The type of TLS.
+  string caCertFile = 2; // The CA certificate file.
+  string serverKeyFile = 3; // The server key file.
+  string serverCertFile = 4; // The server certificate file.
+}
+
+/**
+ * Represents the SSL certificates.
+ */
+message SSLCerts {
+  string sslCert = 1; // The SSL certificate.
+  string sslKey = 2; // The SSL key.
+  string vId = 3; // Ignore in Requests
+  bool isAlreadyInSecretBS = 4; // Indicates if the SSL certificates are already in the secret base store.
+  CommonStatus status = 5; // The status.
+}
+
+/**
+ * Represents the response from the data manager.
+ */
+message DMResponse {
+  string message = 1; // The message.
+  string dmStatusCode = 2; // The data manager status code.
+  repeated MapList customMessage = 3; // The list of custom messages.
+  repeated AgentShort agents = 4; // The list of agents.
+}
+
+/**
+ * Represents a short version of an agent.
+ */
+message AgentShort {
+  string agent = 1; // The agent.
+  string agentType = 2; // The agent type.
+  string goalStatus = 3; // The goal status.
+  repeated string error = 4; // The list of errors.
+  string result = 5; // The result.
+}
+
+/**
+ * Represents a dynamic message.
+ */
+message DynamicMessage {
+  //google.protobuf.Struct struct_field = 1;
+  //google.protobuf.Value value_field = 2;
+}
+
+/**
+ * Represents an update to a dynamic message.
+ */
+message DynamicMessageUpdate {
+  DynamicMessage body = 1; // The body of the dynamic message.
+  //google.protobuf.FieldMask update_mask = 2; //  @gotags: yaml:"username"
+}
+
+/**
+ * Represents the vapus credentials.
+ */
+message VapusCredentials {
+  string username = 1; // The username.
+  string password = 2; // The password.
+  string apiToken = 3; // The API token.
+  ApiTokenType apiTokenType = 4; // The type of API token.
+  AWSCreds awsCreds = 5; // The AWS credentials.
+  GCPCreds gcpCreds = 6; // The GCP credentials.
+  AzureCreds azureCreds = 7; // The Azure credentials.
+}
+
+/**
+ * Represents the AWS credentials.
+ */
+message AWSCreds {
+  string accessKeyId = 1; // The AWS access key ID.
+  string secretAccessKey = 2; // The AWS secret access key.
+  string region = 3; // The AWS region.
+  string sessionToken = 4; // The AWS session token.
+}
+
+/**
+ * Represents the GCP credentials.
+ */
+message GCPCreds {
+  string serviceAccountKey = 1; // The GCP service account key.
+  bool base64Encoded = 2; // Indicates if the service account key is base64 encoded.
+  string region = 3; // The GCP region.
+  string projectId = 4; // The GCP project ID.
+  string zone = 5; // The GCP zone.
+}
+
+/**
+ * Represents the Azure credentials.
+ */
+message AzureCreds {
+  string tenantId = 1; // The Azure tenant ID.
+  string clientId = 2; // The Azure client ID.
+  string clientSecret = 3; // The Azure client secret.
+}
+
+/**
+ * Represents a digest value.
+ */
+message DigestVal {
+  HashAlgos algo = 1; // The hash algorithm.
+  string digest = 2; // The digest value.
+}
+
+/**
+ * Represents an empty request.
+ */
+message EmptyRequest {
+  
+}
+
+/**
+ * Represents the OIDC authentication parameters.
+ */
+message AuthnOIDC {
+  string callback = 1; // The OIDC callback URL.
+  string clientId = 2; // The OIDC client ID.
+  string clientSecret = 3; // The OIDC client secret.
+  string vId = 4; //@gotags: yaml:"vId"
+  bool isAlreadyInSecretBS = 5; // Indicates if the OIDC client credentials are already in the secret base store.
+  CommonStatus status = 6; // The status.
+}
+
+/**
+ * Represents a log entry.
+ */
+message Logs {
+  int64 time = 1; // The timestamp of the log entry.
+  string hTime = 2; // The human-readable timestamp of the log entry.
+  string logType = 3; // The type of log entry.
+  string message = 4; // The log message.
+}

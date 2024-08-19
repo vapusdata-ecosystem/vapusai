@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+//import "googleapis/v1/annotations.proto";
+// import "buf/validate/validate.proto";
+import "protos/models/v1alpha1/common.proto";
+import "protos/models/v1alpha1/space.proto";
+import "protos/models/v1alpha1/aimodels.proto";
+
+package aistudio.v1alpha1;
+
+option go_package = "github.com/vapusdata-ecosystem/vapusai-studio/apis/protos/aistudio/v1alpha1";
+
+service VapusAiStudio {
+    rpc StudioSpaceInterface(StudioSpaceRequest) returns (StudioSpaceResponse) {}
+    rpc AIModelConfigurationInterface(AIModelConfigurationRequest) returns(AIModelConfigurationResponse) {}
+    // rpc GenerateEmbeddings() returns() {}
+    // rpc GenerateTranscription() returns() {}
+    // rpc Synthesizer() returns() {}
+    // rpc GenerateSyntheticData() returns() {}
+    // rpc Ask(AskPrompt) returns() {}
+    // rpc PromptInterface() returns() {}
+    // rpc ModelTrainerInterface() returns() {}
+}
+
+enum InterfaceAction {
+    INVALID_I_ACTION = 0;
+    ADD = 1;
+    LIST = 2;
+    DESCRIBE = 3;
+    ARCHIVE = 4;
+}
+
+message StudioSpaceRequest {
+    InterfaceAction action = 1; // @gotags: yaml:"action"
+    models.v1alpha1.Space spec = 2; // @gotags: yaml:"spec"
+    models.v1alpha1.SearchParam search = 3; // @gotags: yaml:"search"
+}
+
+message StudioSpaceResponse {
+    repeated models.v1alpha1.Space body = 1; // @gotags: yaml:"body"
+}
+
+message AIModelConfigurationRequest {
+    InterfaceAction action = 1; // @gotags: yaml:"action"
+    models.v1alpha1.AIModelService spec = 2; // @gotags: yaml:"spec"
+    models.v1alpha1.SearchParam search = 3; // @gotags: yaml:"search"
+}
+
+message AIModelConfigurationResponse {
+    repeated models.v1alpha1.AIModelService body = 1; // @gotags: yaml:"body"
+}
+
+message VapusAiAgentRequest {
+    string inputText = 1; // @gotags: yaml:"inputText"
+    string agentId = 2; // @gotags: yaml:"agentId"
+    models.v1alpha1.AIModelAgentparam params = 3;
+}
+
+message VapusAiAgentResponse {
+    repeated VapusResponseStruct body = 1; // @gotags: yaml:"body"
+}
+
+message VapusResponseStruct {
+    string result = 1; // @gotags: yaml:"result"
+    string metadata = 2; // @gotags: yaml:"metadata"
+    VectorEmbeddings embeddings = 3; // @gotags: yaml:"embeddings"
+}
+
+message VectorEmbeddings {
+    repeated float vectors = 1; // @gotags: yaml:"vectors"
+}

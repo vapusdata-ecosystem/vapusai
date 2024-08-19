@@ -1,0 +1,59 @@
+/**
+ * This file defines the protocol buffer messages for the common models in the v1alpha1 version of the API.
+ */
+
+syntax = "proto3";
+
+//import "googleapis/v1/annotations.proto";
+// import "buf/validate/validate.proto";
+import "protos/models/v1alpha1/enums.proto";
+import "protos/models/v1alpha1/common.proto";
+
+package models.v1alpha1;
+
+option go_package = "github.com/vapusdata-ecosystem/vapusai-studio/apis/protos/models/v1alpha1";
+
+message AIModelScope {
+    ConfigScope scope = 1; // @gotags: yaml:"scope"
+    string space = 2; // @gotags: yaml:"space"
+    AIServiceHostType hostType = 3; // @gotags: yaml:"hostType"
+}
+
+message LlmAttributes {
+    repeated string models = 1; // @gotags: yaml:"models"
+    repeated string embeddingModels = 2; // @gotags: yaml:"embeddingModels"
+    bool discoverlModels = 3; // @gotags: yaml:"embeddingModels"
+}
+
+message LlmNetworkParams {
+    string URL = 1; // @gotags: yaml:"url"
+    string port = 2; // @gotags: yaml:"port"
+    string apiVersion = 3; // @gotags: yaml:"apiVersion"
+    string localPath = 4; // @gotags: yaml:"localPath"
+    VapusCredentials credentials = 5; // @gotags: yaml:"credentials"
+}
+
+message AIModelService {
+    AIModelServiceProvider serviceProvider = 1; // @gotags: yaml:"serviceProvider"
+    AIModelScope scope = 2; // @gotags: yaml:"scope"
+    LlmNetworkParams networkParams = 3; // @gotags: yaml:"networkParams"
+    string name = 4; // @gotags: yaml:"name"
+    string llmSvcId = 5; // @gotags: yaml:"llmSvcId"
+    LlmAttributes attributes = 6; // @gotags: yaml:"attributes"
+}
+
+message StudioToolCalls {
+    string toolType = 1; // @gotags: yaml:"toolType"
+    string name = 2; // @gotags: yaml:"name"
+    string definition = 3; // @gotags: yaml:"definition"
+    repeated string parameters = 4; // @gotags: yaml:"parameters"
+}
+
+message AIModelAgentparam {
+    float temperature = 1; // @gotags: yaml:"temperature"
+    string llmSvcId = 2; // @gotags: yaml:"llmSvcId"
+    string model = 3; // @gotags: yaml:"model"
+    int64 maxTokens = 4; // @gotags: yaml:"maxTokens"
+    repeated StudioToolCalls toolCalls = 5; // @gotags: yaml:"toolCalls"
+}
+

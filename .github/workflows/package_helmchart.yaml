@@ -1,0 +1,142 @@
+name: Vapusdata Helm Chart
+
+on:
+  # push:
+  #   paths:
+  #     - 'deployments/helm-chart/vapusdata/**'
+  workflow_call:
+    secrets:
+      oci-username:
+        required: true
+      oci-password:
+        required: true
+      signing-key:
+        required: true
+      signing-password:
+        required: true
+    inputs:
+      platform-oci-tag:
+        required: false
+        type: string
+        default: ""
+      platform-oci-digest:
+        required: false
+        type: string
+        default: ""
+      etldataworker-oci-tag:
+        required: false
+        type: string
+        default: ""
+      etldataworker-oci-digest:
+        required: false
+        type: string
+        default: ""
+      vapusctl-oci-tag:
+        required: false
+        type: string
+        default: ""
+      vapusctl-oci-digest:
+        required: false
+        type: string
+        default: ""
+      vapusoperator-oci-tag:
+        required: false
+        type: string
+        default: ""
+      vapusoperator-oci-digest:
+        required: false
+        type: string
+        default: ""
+      vapus-dc-oci-tag:
+        required: false
+        type: string
+        default: ""
+      vapus-dc-oci-digest:
+        required: false
+        type: string
+        default: ""
+      upload-artifact:
+        required: false
+        type: boolean
+        default: false
+      tag:
+        required: false
+        type: string
+        default: ""
+      oci-registry:
+        required: true
+        type: string
+jobs:
+  helmchart-build-app:
+    name: Build Helm chart for vapusdata platform
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required for goreleaser to upload the release assets
+      packages: write # to push worker images
+      pull-requests: write
+      id-token: write
+    env:
+      SIGNING_KEY: ${{ secrets.signing-key }}
+      SIGNING_PASSWORD: ${{ secrets.signing-password }}
+      OCI_REGISTRY: ${{ inputs.oci-registry }}
+      OCI_USERNAME: ${{ secrets.oci-username }}
+      OCI_PASSWORD: ${{ secrets.oci-password }}
+      OCI_IMAGE: /vapusdata-ecosystem/vapusdata-platform-helmchart
+    steps:      
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.22.4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.6.1 # v3.0.0
+        
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Check cosign install!
+        run: cosign version
+
+      - name: Extract env vars
+        id: extract_env_vars
+        run: |
+          echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          
+      - name: Log in to Google Artifact Registry
+        run: |
+          echo ${{ secrets.GAR_DEV_USERNAME }}
+          echo ${{ secrets.VAPUS_BETA_GAR_PASS }}
+          docker login -u "${{ env.OCI_USERNAME }}" --password "${{ env.OCI_PASSWORD }}" "${{ env.OCI_REGISTRY }}"
+
+      # Move this to raise MR
+      - name: Updating Helm Chart Version
+        working-directory: scripts/goscripts
+        run: |
+          go mod tidy
+          go run main.go --helm-registry ${{ env.OCI_REGISTRY }}/vapusdata-ecosystem --helm-registry-username ${{ secrets.GAR_DEV_USERNAME }} --helm-registry-password=${{ secrets.VAPUS_BETA_GAR_PASS }} --platform-svc-digest=${{ inputs.platform-oci-digest }} --platform-svc-tag=${{ inputs.platform-oci-tag }} --vapusctl-svc-digest=${{ inputs.vapusctl-oci-digest }} --vapusctl-svc-tag=${{ inputs.vapusctl-oci-tag }} --vapusoperator-svc-digest=${{ inputs.vapusoperator-oci-digest }} --vapusoperator-svc-tag=${{ inputs.vapusoperator-oci-tag }} --etlworker-svc-digest=${{ inputs.etldataworker-oci-digest }} --etlworker-svc-tag=${{ inputs.etldataworker-oci-tag }} --vapus-dc-svc-digest=${{ inputs.vapus-dc-oci-digest }} --vapus-dc-svc-tag=${{ inputs.vapus-dc-oci-tag }} --bump-version=false --appVersion=${{ env.TAG_NAME }} --upload=${{ inputs.upload-artifact }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6.1.0
+        with:
+          commit-message: |
+            Bumping helm Chart Version ${{ env.TAG_NAME }} 
+            for new release based on the code changes pushed to the ${{ env.TAG_NAME }} tag
+          signoff: true
+          base: main
+          title: Bump Helm Chart Version => ${{ env.TAG_NAME }}
+          body: |
+            New Vapusdata release is available.... \n Bumping Helm Chart reference to ${{ env.TAG_NAME }}
+          labels: |
+            automated
+            helm update
+      # - name: Sign Helm Chart OCI Image ${{ env.OCI_IMAGE }}:${{ env.TAG_NAME }}
+      #   env:
+      #     COSIGN_KEY: ${{ env.SIGNING_KEY }}
+      #     COSIGN_PASSWORD: ${{ env.SIGNING_PASSWORD }}
+      #   run: |
+      #     cosign sign --key env://COSIGN_KEY --upload=true ${{ env.OCI_REGISTRY }}${{ env.OCI_IMAGE }}:${{ env.helmChartVersion }}

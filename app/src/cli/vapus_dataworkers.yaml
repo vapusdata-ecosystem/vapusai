@@ -1,0 +1,109 @@
+name: ""
+domain: ""
+dataWorkerType: ETL
+etlWorker:
+    name: ""
+    extracter:
+        - name: ""
+          dataSource: ""
+          label: ""
+          inputFromLabel: ""
+          dataRule:
+            dataBase: ""
+            rawQuery:
+                dataTable: []
+                rawQuery: ""
+                textQuery: ""
+                batchSize: 0
+            customQueryParam:
+                queryCondition: ""
+                fields: []
+                distinctFields: ""
+                orderBy: []
+                limit: 0
+                batchSize: 0
+                dataTables: []
+    loader:
+        - name: ""
+          dataSource: ""
+          domain: ""
+          labels: []
+          dataRule:
+            dataBase: ""
+            dataTables: {}
+            createTables: false
+            schemaQueries: []
+            generateSchemaByPlatform: false
+            batchSize: 0
+            batchWait: 0
+    transformers:
+        steps:
+            - column:
+                add:
+                    - name: ""
+                      value: ""
+                      position: ""
+                      condition: ""
+                      entities: ""
+                      dataTable: ""
+                      label: ""
+                      conditionOperator: ""
+                      conditionVal: ""
+                rename:
+                    - name: ""
+                      value: ""
+                      position: ""
+                      condition: ""
+                      entities: ""
+                      dataTable: ""
+                      label: ""
+                      conditionOperator: ""
+                      conditionVal: ""
+                drop:
+                    - name: ""
+                      value: ""
+                      position: ""
+                      condition: ""
+                      entities: ""
+                      dataTable: ""
+                      label: ""
+                      conditionOperator: ""
+                      conditionVal: ""
+                update:
+                    - name: ""
+                      value: ""
+                      position: ""
+                      condition: ""
+                      entities: ""
+                      dataTable: ""
+                      label: ""
+                      conditionOperator: ""
+                      conditionVal: ""
+                groupBy: []
+              row:
+                drop:
+                    - name: ""
+                      value: ""
+                      entity: []
+                      condition: ""
+                      conditionOperator: ""
+                      conditionVal: ""
+                      dataTable: ""
+                      label: ""
+                update:
+                    - name: ""
+                      value: ""
+                      entity: []
+                      condition: ""
+                      conditionOperator: ""
+                      conditionVal: ""
+                      dataTable: ""
+                      label: ""
+              stepId: ""
+        globals:
+            classified: []
+            vars: []
+            useDeclared: false
+        script: []
+        embeddingTransformer: []
+    label: ""

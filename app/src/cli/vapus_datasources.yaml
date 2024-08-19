@@ -1,0 +1,68 @@
+name: ""
+netParams:
+    address: ""
+    port: 0
+    databases: []
+    dsCreds:
+        - name: ""
+          IsAlreadyInSecretBS: false
+          credentials:
+            username: ""
+            password: ""
+            apiToken: ""
+            apiTokenType: 0
+            awsCreds:
+                accessKeyId: ""
+                secretAccessKey: ""
+                region: ""
+                sessionToken: ""
+            gcpCreds:
+                serviceAccountKey: ""
+                base64Encoded: false
+                region: ""
+                projectId: ""
+                zone: ""
+            azureCreds:
+                tenantId: ""
+                clientId: ""
+                clientSecret: ""
+          priority: 0
+          accessScope: 0
+          db: ""
+          secretName: ""
+attributes:
+    storageEngine: 0
+    serviceName: 0
+    serviceProvider: 0
+    goal: 0
+    supportedArtifactTypes: []
+dataSourceId: ""
+ownerDomain: ""
+owners: []
+sharable: false
+dataSourceType: 0
+status: 0
+tags:
+    - key: ""
+      value: ""
+sharingParams:
+    domainId: ""
+    accessScope: 0
+    validFrom: 0
+    validTill: 0
+accountId: ""
+meshId: ""
+dataCompliances:
+    - complianceName: ""
+      description: ""
+      complianceFields:
+        - piiField: ""
+          rule:
+            frequency: 0
+            value: 0
+      autoDetectGlobals: false
+scheme: []
+metaSyncSchedule:
+    frequency: 0
+    value: 0
+    limit: 0

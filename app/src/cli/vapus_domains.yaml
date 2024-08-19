@@ -1,0 +1,75 @@
+name: ""
+displayName: ""
+domainId: ""
+users: []
+secretPasscode:
+    saltVal: ""
+attributes:
+    authnJwtParams:
+        name: ""
+        publicJWTKey: ""
+        privateJWTKey: ""
+        vid: ""
+        signingAlgorithm: 0
+        isAlreadyInSecretBS: false
+        status: 0
+        generateInPlatform: false
+dataRules: null
+status: 0
+dataSources: []
+domainType: 0
+accountId: ""
+meshId: ""
+backendSecretStorage:
+    besType: 0
+    besOnboarding: 0
+    besService: 0
+    netParams: null
+    status: 0
+    besEngine: 0
+artifactStorage:
+    besType: 0
+    besOnboarding: 0
+    besService: 0
+    netParams: null
+    status: 0
+    besEngine: 0
+dataCatalog:
+    - name: ""
+      displayName: ""
+      dataCatalogId: ""
+      accountId: ""
+      meshId: ""
+      dataProducts: []
+      description: ""
+CatalogIndex: ""
+domainArtifacts:
+    - artifactType: ""
+      artifacts: []
+dataProductInfraPlatform:
+    - serviceProvider: 0
+      infraService: 0
+      name: ""
+      credentials:
+        username: ""
+        password: ""
+        apiToken: ""
+        apiTokenType: 0
+        awsCreds:
+            accessKeyId: ""
+            secretAccessKey: ""
+            region: ""
+            sessionToken: ""
+        gcpCreds:
+            serviceAccountKey: ""
+            base64Encoded: false
+            region: ""
+            projectId: ""
+            zone: ""
+        azureCreds:
+            tenantId: ""
+            clientId: ""
+            clientSecret: ""
+      displayName: ""
+      infraId: ""
+      kubeConfig: ""

@@ -1,0 +1,30 @@
+/**
+ * This file defines the protocol buffer messages for the common models in the v1alpha1 version of the API.
+ */
+
+syntax = "proto3";
+
+//import "googleapis/v1/annotations.proto";
+// import "buf/validate/validate.proto";
+import "protos/models/v1alpha1/enums.proto";
+
+package models.v1alpha1;
+
+option go_package = "github.com/vapusdata-ecosystem/vapusai-studio/apis/protos/models/v1alpha1";
+
+message Space {
+    string name = 1; // @gotags: yaml:"name"
+    string displayName = 2; // @gotags: yaml:"displayName"
+    string spaceId = 3; // @gotags: yaml:"spaceId"
+    repeated string users = 4; // @gotags: yaml:"users"
+    repeated string ownerUsers = 5; // @gotags: yaml:"ownerUsers"
+}
+
+message User {
+    string displayName = 1; // @gotags: yaml:"displayName"
+    string userId = 2; // @gotags: yaml:"userId"
+    string email = 3; // @gotags: yaml:"email"
+    CommonStatus status = 4; // @gotags: yaml:"status"
+    string firstName = 5; // @gotags: yaml:"firstName"
+    string lastName = 6; // @gotags: yaml:"lastName"
+}
